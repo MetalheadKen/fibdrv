@@ -18,7 +18,7 @@ $(GIT_HOOKS):
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
-	$(RM) client out
+	$(RM) client out client_time client_time.png
 load:
 	sudo insmod $(TARGET_MODULE).ko
 unload:
@@ -39,3 +39,11 @@ check: all
 	$(MAKE) unload
 	@diff -u out scripts/expected.txt && $(call pass)
 	@scripts/verify.py
+
+plot: all
+	$(MAKE) unload
+	$(MAKE) load
+	@sudo ./client_perf.sh ./client > out
+	$(MAKE) unload
+	@gnuplot client_time.gp
+	@eog client_time.png
