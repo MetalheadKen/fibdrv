@@ -1,5 +1,19 @@
 #!/bin/bash
 
+###
+# Store original value about system performance
+###
+ORIG_ASLR=$(cat /proc/sys/kernel/randomize_va_space)
+ORIG_SCAL=$(cat /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor)
+ORIG_NTURBO=$(cat /sys/devices/system/cpu/intel_pstate/no_turbo)
+
+###
+# Reduce factor of interference performance benchmark
+###
+echo 0 > /proc/sys/kernel/randomize_va_space
+echo performance > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
+
 ####
 # Get offset of user-space read function
 ####
@@ -72,3 +86,10 @@ while [ $cnt -le 100 ] && IFS=" " read -r -u 4 user1 && IFS=" " read -r -u 5 ker
 done 4<$USER_DIR/user_time.tmp 5<$USER_DIR/kernel_time.tmp 6<$USER_DIR/lseek_offset.tmp
 
 rm *.tmp
+
+###
+# Restore value about system performance
+###
+echo "$ORIG_ASLR" > /proc/sys/kernel/randomize_va_space
+echo "$ORIG_SCAL" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+echo "$ORIG_NTURBO" > /sys/devices/system/cpu/intel_pstate/no_turbo

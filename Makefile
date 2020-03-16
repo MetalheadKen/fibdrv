@@ -43,7 +43,7 @@ check: all
 plot: all
 	$(MAKE) unload
 	$(MAKE) load
-	@sudo ./client_perf.sh ./client > out
+	@sudo ./client_perf.sh taskset -c 7 ./client > out
 	$(MAKE) unload
 	@gnuplot client_time.gp
 	@eog client_time.png

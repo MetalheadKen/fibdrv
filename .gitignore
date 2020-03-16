@@ -29,3 +29,5 @@ dkms.conf
 # test-oriented
 client
 out
+client_time
+client_time.png
